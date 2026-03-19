@@ -1,0 +1,540 @@
+---
+import '../styles/global.css';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Independent Design Agency</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Syne+Mono&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --blue-vivid: #2563EB;
+        --blue-bg: #3B6FF5;
+        --blue-dark: #1a3db5;
+        --accent-green: #AAEE44;
+        --accent-pink: #FF4FCB;
+        --accent-yellow: #FFD166;
+        --text-light: #F5F5FF;
+        --text-dark: #0a0a12;
+        --off-white: #f0f0f8;
+        --surface: #0a0a12;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      @media (min-width: 768px) { body, a, button { cursor: none; } }
+
+      body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--text-light); overflow-x: hidden; }
+      ::selection { background: var(--accent-green); color: var(--text-dark); }
+
+      /* 1. FILM GRAIN OVERLAY */
+      .noise-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        pointer-events: none; z-index: 99998; opacity: 0.05;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
+
+      /* ── Preloader & Cursor ── */
+      #preloader { position: fixed; inset: 0; background: var(--surface); z-index: 999999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+      .preloader-text { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: white; overflow: hidden; display: inline-block; }
+      .preloader-text span { display: inline-block; transform: translateY(100%); }
+      
+      .cursor { width: 14px; height: 14px; background: white; border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); mix-blend-mode: difference; transition: transform 0.15s ease; }
+      .cursor.enlarged { transform: translate(-50%, -50%) scale(4); }
+
+      /* 2. HOVER REVEAL CURSOR (UNTUK SERVICES) */
+      .service-img-cursor {
+        position: fixed; top: 0; left: 0; width: 300px; height: 400px;
+        pointer-events: none; z-index: 90000;
+        opacity: 0; transform: translate(-50%, -50%) scale(0.8);
+        border-radius: 16px; overflow: hidden;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      .service-img-cursor.active { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      .service-img-cursor img { width: 100%; height: 100%; object-fit: cover; }
+
+      /* ── Nav & Mobile Menu ── */
+      nav { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 2.5rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; mix-blend-mode: difference; }
+      .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: white; text-decoration: none; display: inline-block; }
+      .nav-links { display: none; gap: 2.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; }
+      @media (min-width: 768px) { .nav-links { display: flex; } .menu-btn { display: none !important; } }
+      .nav-links a { color: white; text-decoration: none; transition: font-style 0.2s; }
+      .nav-links a:hover { font-style: italic; }
+      .nav-cta { background: var(--accent-green); color: var(--text-dark); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; border: none; padding: 0.6rem 1.2rem; border-radius: 999px; cursor: pointer; display: none; transition: background 0.2s; }
+      @media (min-width: 768px) { .nav-cta { display: inline-block; } }
+      .nav-cta:hover { background: white; }
+      .menu-btn { background: none; border: none; color: white; font-family: 'Syne Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; z-index: 101; }
+      .mobile-menu { position: fixed; top: 0; left: 0; width: 100%; height: 137vh; background: var(--blue-bg); z-index: 90; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transform: translateX(100%); }
+      .mobile-link { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: white; text-decoration: none; opacity: 0; transform: translateY(20px); letter-spacing: -0.02em; }
+
+      /* ── HERO ── */
+      #hero { min-height: 100vh; background: var(--blue-bg); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 6rem 2rem 4rem; }
+      .blob { position: absolute; border-radius: 50%; pointer-events: none; }
+      .blob-1 { width: 120px; height: 120px; background: var(--accent-green); top: 15%; left: 8%; animation: floatA 5s ease-in-out infinite; }
+      .blob-2 { width: 80px; height: 80px; background: var(--accent-pink); bottom: 20%; left: 12%; animation: floatB 6s ease-in-out infinite; }
+      .blob-3 { width: 60px; height: 60px; background: var(--accent-yellow); top: 20%; right: 10%; border-radius: 0; transform: rotate(45deg); animation: floatC 4s ease-in-out infinite; }
+      .blob-4 { width: 90px; height: 90px; background: #0a0a12; bottom: 18%; right: 8%; animation: floatA 7s ease-in-out infinite reverse; }
+      @keyframes floatA { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-18px); } }
+      @keyframes floatB { 0%, 100% { transform: translateY(0px) translateX(0px); } 50% { transform: translateY(-12px) translateX(10px); } }
+      @keyframes floatC { 0%, 100% { transform: rotate(45deg) translateY(0px); } 50% { transform: rotate(45deg) translateY(-14px); } }
+      .hello-wrapper { position: relative; text-align: center; z-index: 2; }
+      #hello-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(4rem, 15vw, 12rem); color: white; line-height: 1; letter-spacing: -0.03em; display: block; opacity: 1; transform: translateY(0); transition: opacity 0.3s ease, transform 0.3s ease; }
+      #hello-text.exit { opacity: 0; transform: translateY(-30px) scale(0.95); }
+      #hello-text.enter { opacity: 0; transform: translateY(30px) scale(0.95); }
+      #lang-badge { display: inline-block; font-family: 'Syne Mono', monospace; font-size: 0.7rem; background: rgba(0,0,0,0.25); color: rgba(255,255,255,0.85); padding: 0.25rem 0.75rem; border-radius: 999px; margin-bottom: 0.75rem; transition: opacity 0.3s; }
+      .hero-sub { margin-top: 1.5rem; text-align: center; z-index: 2; opacity: 0; transform: translateY(16px); }
+      .hero-sub p { font-size: clamp(0.9rem, 2vw, 1.1rem); font-weight: 300; color: rgba(255,255,255,0.8); }
+      .hero-sub strong { font-style: italic; font-weight: 400; color: white; }
+
+      /* ── ABOUT ── */
+      #about { padding: 6rem 1.5rem; background: var(--off-white); color: var(--text-dark); position: relative; overflow: hidden; }
+      @media (min-width: 768px) { #about { padding: 8rem 2.5rem; } }
+      .about-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3rem; position: relative; z-index: 2; }
+      @media (min-width: 768px) { .about-inner { grid-template-columns: 5fr 7fr; gap: 4rem; } }
+      .about-tag { font-family: 'Syne Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--blue-vivid); margin-bottom: 1.2rem; }
+      .about-heading { font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
+      .about-heading em { font-style: italic; color: var(--blue-vivid); }
+      .about-body { font-size: 1.05rem; line-height: 1.75; color: #444; max-width: 380px; }
+      .services-list { list-style: none; border-top: 1px solid #d0d0d8; }
+      .service-item { padding: 1.5rem 0; border-bottom: 1px solid #d0d0d8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: padding-left 0.3s; opacity: 0; transform: translateY(20px); }
+      .service-item:hover { padding-left: 1.2rem; }
+      .service-name { font-family: 'Syne', sans-serif; font-size: clamp(1.2rem, 3vw, 2.2rem); font-weight: 700; color: var(--text-dark); pointer-events: none; }
+      .service-num { font-family: 'Syne Mono', monospace; font-size: 0.85rem; color: #aaa; transition: color 0.3s; pointer-events: none; }
+      .service-item:hover .service-num { color: var(--blue-vivid); }
+      .decorative-brush { position: absolute; top: 10%; left: 35%; height: 120%; width: 300px; pointer-events: none; z-index: 0; opacity: 0.4; }
+      .brush-path { stroke: var(--accent-pink); stroke-width: 8; stroke-linecap: round; fill: none; }
+
+      /* ── WORK / SHOWCASE ── */
+      .showcase-wrapper { background: var(--surface); position: relative; overflow: hidden; }
+      .showcase-label { position: absolute; top: 3rem; left: 1.5rem; z-index: 10; }
+      @media (min-width: 768px) { .showcase-label { left: 2.5rem; } }
+      .showcase-label h2 { font-family: 'Syne Mono', monospace; font-size: 0.75rem; text-transform: uppercase; color: var(--accent-green); }
+      .horizontal-scroll-container { display: flex; flex-direction: column; width: 100%; height: auto; padding-top: 6rem; }
+      .panel { width: 100%; padding: 2rem 1.5rem; }
+      @media (min-width: 768px) {
+        .horizontal-scroll-container { flex-direction: row; height: 100vh; align-items: center; width: 300vw; padding-top: 0; }
+        .panel { width: 100vw; height: 100%; display: flex; align-items: center; justify-content: center; padding: 4rem 2.5rem 2rem; }
+      }
+      .project-card { width: 100%; max-width: 900px; height: 50vh; position: relative; cursor: pointer; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.4s, box-shadow 0.4s; }
+      @media (min-width: 768px) { .project-card { height: 70vh; } }
+      .project-card:hover { transform: translateY(-8px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.25); }
+      
+      .project-media-container { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+      .project-media-container img, .project-media-container video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; transition: transform 0.8s ease, opacity 0.5s ease; }
+      .project-media-container video { opacity: 0; } 
+      .project-card:hover .project-media-container img { opacity: 0; transform: scale(1.04); }
+      .project-card:hover .project-media-container video { opacity: 1; transform: scale(1.04); }
+
+      .project-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,18,0.95) 0%, rgba(10,10,18,0.2) 50%, transparent 100%); pointer-events: none; }
+      .project-info { position: absolute; bottom: 0; left: 0; padding: 1.5rem; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; }
+      @media (min-width: 768px) { .project-info { padding: 2.5rem; } }
+      .project-title { font-family: 'Syne', sans-serif; font-size: clamp(1.5rem, 4.5vw, 4rem); font-weight: 800; color: white; line-height: 1; transform: translateY(10px); transition: transform 0.4s ease; }
+      .project-card:hover .project-title { transform: translateY(0); }
+      .project-category { font-family: 'DM Sans', sans-serif; font-size: clamp(0.85rem, 2vw, 1.05rem); color: rgba(255,255,255,0.7); margin-top: 0.6rem; }
+      .project-tag { font-family: 'Syne Mono', monospace; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: var(--text-dark); padding: 0.5rem 1rem; border-radius: 999px; opacity: 0; transform: translateY(15px); transition: all 0.4s; display: none; }
+      @media (min-width: 768px) { .project-tag { display: block; } }
+      .project-card:hover .project-tag { opacity: 1; transform: translateY(0); }
+      .tag-pink { background: var(--accent-pink); }
+      .tag-yellow { background: var(--accent-yellow); }
+      .tag-green { background: var(--accent-green); }
+
+      /* 3. INFINITE MARQUEE */
+      .marquee-section { background: var(--accent-green); color: var(--text-dark); padding: 1.5rem 0; overflow: hidden; display: flex; align-items: center; border-top: 1px solid var(--text-dark); border-bottom: 1px solid var(--text-dark); }
+      .marquee-track { display: flex; white-space: nowrap; font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; animation: scrollMarquee 20s linear infinite; }
+      .marquee-track span { padding: 0 2rem; }
+      @keyframes scrollMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+      /* ── CONTACT ── */
+      #contact { background: var(--blue-bg); color: white; padding: 6rem 1.5rem; }
+      @media (min-width: 768px) { #contact { padding: 10rem 2.5rem; } }
+      .contact-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 4rem; }
+      @media (min-width: 768px) { .contact-inner { grid-template-columns: 1fr 1fr; gap: 6rem; } }
+      .contact-eyebrow { font-family: 'Syne Mono', monospace; font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; display: block; }
+      .contact-heading { font-family: 'Syne', sans-serif; font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 800; line-height: 1; letter-spacing: -0.03em; margin-bottom: 2rem; }
+      .contact-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+      @media (min-width: 600px) { .contact-grid { grid-template-columns: 1fr 1fr; } }
+      .contact-block { opacity: 0; transform: translateY(20px); }
+      .contact-block h4 { font-family: 'Syne Mono', monospace; font-size: 0.75rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); }
+      .contact-link { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; color: white; text-decoration: none; transition: color 0.3s; display: inline-block; }
+      .contact-link:hover { color: var(--accent-yellow); }
+      .social-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+      .social-list a { font-family: 'DM Sans', sans-serif; font-size: 1.1rem; color: white; text-decoration: none; transition: color 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; }
+      .social-list a:hover { color: var(--accent-pink); }
+      .social-list a::before { content: '→'; opacity: 0; transform: translateX(-10px); transition: all 0.3s; }
+      .social-list a:hover::before { opacity: 1; transform: translateX(0); }
+      .address-text { font-family: 'DM Sans', sans-serif; font-size: 1.1rem; line-height: 1.6; color: rgba(255,255,255,0.9); }
+
+      /* FOOTER */
+      footer { background: var(--surface); color: white; padding: 2rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+      @media (min-width: 768px) { footer { padding: 2rem 2.5rem; } }
+      .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; justify-content: space-between; align-items: center; font-family: 'Syne Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); }
+      @media (min-width: 768px) { .footer-inner { flex-direction: row; } }
+      .footer-links { display: flex; gap: 2rem; }
+      .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.3s; }
+      .footer-links a:hover { color: white; }
+      .back-to-top { background: none; border: none; color: white; font-family: 'Syne Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: color 0.3s; }
+      .back-to-top:hover { color: var(--accent-green); }
+      .back-to-top svg { width: 14px; height: 14px; transition: transform 0.3s; }
+      .back-to-top:hover svg { transform: translateY(-3px); }
+
+      /* Class tambahan untuk elemen yang akan miring (skewX) saat di-scroll */
+      .skew-x-elem { transform-origin: center; will-change: transform; }
+    </style>
+  </head>
+
+  <body>
+    <div class="noise-overlay"></div>
+
+    <div id="preloader">
+      <div class="preloader-text"><span id="pre-text">NETH©</span></div>
+    </div>
+
+    <div class="cursor" id="cursor"></div>
+
+    <div class="service-img-cursor hidden md:block" id="service-img-cursor">
+      <img src="" alt="Service preview" id="service-img-target" />
+    </div>
+
+    <nav>
+      <a href="#" class="nav-logo hover-target magnetic">NETH©</a>
+      <div class="nav-links">
+        <a href="#work" class="hover-target">Work</a>
+        <a href="#about" class="hover-target">About</a>
+      </div>
+      <a href="#contact" class="nav-cta hover-target magnetic" style="text-decoration: none;">Contact me ↗</a>
+      <button class="menu-btn hover-target">Menu</button>
+    </nav>
+
+    <div class="mobile-menu">
+      <a href="#work" class="mobile-link click-close">Work</a>
+      <a href="#about" class="mobile-link click-close">About</a>
+      <a href="#contact" class="mobile-link click-close" style="color: var(--accent-yellow)">Contact</a>
+    </div>
+
+    <section id="hero">
+      <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div><div class="blob blob-4"></div>
+      <div class="hello-wrapper">
+        <div id="lang-badge">English</div>
+        <span id="hello-text">Hello!</span>
+      </div>
+      <div class="hero-sub">
+        <p>I'm <strong>Studio©</strong> — an independent creative practice</p>
+        <p>crafting meaningful brands & digital experiences.</p>
+      </div>
+    </section>
+
+    <section id="about">
+      <svg class="decorative-brush hidden md:block" viewBox="0 0 200 800" xmlns="http://www.w3.org/2000/svg">
+        <path class="brush-path" d="M 50,0 C 150,200 -50,400 150,600 C 250,700 50,800 50,800" />
+      </svg>
+      <div class="about-inner">
+        <div class="about-left about-text" style="opacity:0; transform:translateY(24px);">
+          <p class="about-tag">What we do</p>
+          <h2 class="about-heading">We make <em>brands</em> people remember.</h2>
+          <p class="about-body">We don't just make things look pretty. We build strategic foundations that help businesses connect with humans on a deeper level. No bullshit, just good design.</p>
+        </div>
+        <div class="about-right">
+          <ul class="services-list">
+            <li class="service-item" data-image="https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=600&auto=format&fit=crop">
+              <span class="service-name">Brand Identity</span><span class="service-num">01</span>
+            </li>
+            <li class="service-item" data-image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop">
+              <span class="service-name">Digital Experience (UI)</span><span class="service-num">02</span>
+            </li>
+            <li class="service-item" data-image="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=600&auto=format&fit=crop">
+              <span class="service-name">Creative Development</span><span class="service-num">03</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="work" class="showcase-wrapper">
+      <div class="showcase-label"><h2>Selected Works (19—24)</h2></div>
+      <div class="horizontal-scroll-container">
+        
+        <div class="panel">
+          <div class="project-card hover-target skew-x-elem" id="card-1">
+            <div class="project-media-container">
+              <img src="https://images.unsplash.com/photo-1600132806370-bf17e65e942f?q=80&w=1080&auto=format&fit=crop" alt="København" />
+              <video src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-networking-web-3960-large.mp4" loop muted playsinline></video>
+            </div>
+            <div class="project-overlay"></div>
+            <div class="project-info">
+              <div><h3 class="project-title">København</h3><p class="project-category">Art Direction & Branding</p></div>
+              <div class="project-tag tag-pink">View Case</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="project-card hover-target skew-x-elem" id="card-2">
+            <div class="project-media-container">
+              <img src="https://images.unsplash.com/photo-1549813276-88abeb7e31c8?q=80&w=1080&auto=format&fit=crop" alt="Aura Object" />
+              <video src="https://assets.mixkit.co/videos/preview/mixkit-liquid-background-with-waves-and-light-reflections-9122-large.mp4" loop muted playsinline></video>
+            </div>
+            <div class="project-overlay"></div>
+            <div class="project-info">
+              <div><h3 class="project-title">Aura Object</h3><p class="project-category">Industrial Design</p></div>
+              <div class="project-tag tag-yellow">View Case</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="project-card hover-target skew-x-elem" id="card-3">
+            <div class="project-media-container">
+              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1080&auto=format&fit=crop" alt="Ode to Form" />
+              <video src="https://assets.mixkit.co/videos/preview/mixkit-ink-swirling-in-water-background-1262-large.mp4" loop muted playsinline></video>
+            </div>
+            <div class="project-overlay"></div>
+            <div class="project-info">
+              <div><h3 class="project-title">Ode to Form</h3><p class="project-category">Web Experience</p></div>
+              <div class="project-tag tag-green">View Case</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="marquee-section">
+      <div class="marquee-track">
+        <span>✦ AVAILABLE FOR NEW PROJECTS ✦ LET'S COLLABORATE ✦ DIGITAL EXPERIENCES</span>
+        <span>✦ AVAILABLE FOR NEW PROJECTS ✦ LET'S COLLABORATE ✦ DIGITAL EXPERIENCES</span>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="contact-inner">
+        <div>
+          <span class="contact-eyebrow">Got a project in mind?</span>
+          <h2 class="contact-heading">Let's make <br/> something <br/> <em>great.</em></h2>
+        </div>
+        
+        <div class="contact-grid">
+          <div class="contact-block">
+            <h4>General Enquiries</h4>
+            <a href="mailto:hello@studio.com" class="contact-link hover-target magnetic">hello@studio.com</a>
+          </div>
+          <div class="contact-block">
+            <h4>Follow Us</h4>
+            <ul class="social-list">
+              <li><a href="#" class="hover-target">Instagram</a></li>
+              <li><a href="#" class="hover-target">LinkedIn</a></li>
+              <li><a href="#" class="hover-target">Twitter / X</a></li>
+            </ul>
+          </div>
+          <div class="contact-block">
+            <h4>Location</h4>
+            <p class="address-text">South Tangerang,<br/>Banten, Indonesia</p>
+          </div>
+          <div class="contact-block">
+            <h4>Local Time</h4>
+            <p class="address-text" id="local-time">WIB (UTC+7)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-inner">
+        <div>&copy; 2026 Studio&trade;. All rights reserved.</div>
+        <button id="back-to-top" class="back-to-top hover-target magnetic">
+          Back to top
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 19V5M5 12l7-7 7 7"/>
+          </svg>
+        </button>
+      </div>
+    </footer>
+
+    <script>
+      import { gsap } from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+      import { ScrollToPlugin } from "gsap/ScrollToPlugin"; 
+      
+      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        
+        // --- PRELOADER ANIMATION ---
+        const tl = gsap.timeline();
+        tl.to("#pre-text", { y: "0%", duration: 0.8, ease: "power4.out", delay: 0.2 })
+          .to("#pre-text", { y: "-100%", duration: 0.6, ease: "power4.in", delay: 0.5 })
+          .to("#preloader", { yPercent: -100, duration: 0.8, ease: "power4.inOut" })
+          .to(".hero-sub", { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, "-=0.4");
+
+        // --- MAGNETIC BUTTON EFFECT ---
+        const magneticElements = document.querySelectorAll('.magnetic');
+        magneticElements.forEach((el) => {
+          el.addEventListener('mousemove', (e) => {
+            // @ts-ignore
+            const rect = el.getBoundingClientRect();
+            // @ts-ignore
+            const x = (e.clientX - rect.left - rect.width / 2) * 0.4; 
+            // @ts-ignore
+            const y = (e.clientY - rect.top - rect.height / 2) * 0.4; 
+            gsap.to(el, { x: x, y: y, duration: 0.3, ease: 'power2.out' });
+          });
+          el.addEventListener('mouseleave', () => {
+            gsap.to(el, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)' });
+          });
+        });
+
+        // --- MOBILE MENU ---
+        let menuOpen = false;
+        const menuBtn = document.querySelector('.menu-btn');
+        const menuTl = gsap.timeline({ paused: true });
+        
+        menuTl.to(".mobile-menu", { x: "0%", duration: 0.6, ease: "power4.inOut" })
+              .to(".mobile-link", { y: 0, opacity: 1, stagger: 0.1, duration: 0.4, ease: "power2.out" }, "-=0.2");
+
+        menuBtn?.addEventListener('click', () => {
+          if(!menuOpen) { menuTl.play(); menuBtn.textContent = "CLOSE"; } 
+          else { menuTl.reverse(); menuBtn.textContent = "MENU"; }
+          menuOpen = !menuOpen;
+        });
+
+        document.querySelectorAll('.click-close').forEach(link => {
+          link.addEventListener('click', () => { menuTl.reverse(); menuBtn!.textContent = "MENU"; menuOpen = false; });
+        });
+
+        // --- CURSORS (REGULAR & IMAGE REVEAL) ---
+        const cursor = document.getElementById('cursor');
+        const hoverTargets = document.querySelectorAll('.hover-target');
+        
+        const serviceImgCursor = document.getElementById('service-img-cursor');
+        const serviceImgTarget = document.getElementById('service-img-target') as HTMLImageElement;
+        const serviceItems = document.querySelectorAll('.service-item');
+
+        document.addEventListener('mousemove', (e) => { 
+          gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.08, ease: "power2.out" }); 
+          gsap.to(serviceImgCursor, { x: e.clientX, y: e.clientY, duration: 0.4, ease: "power3.out" });
+        });
+
+        hoverTargets.forEach(el => {
+          el.addEventListener('mouseenter', () => cursor?.classList.add('enlarged'));
+          el.addEventListener('mouseleave', () => cursor?.classList.remove('enlarged'));
+        });
+
+        serviceItems.forEach(item => {
+          item.addEventListener('mouseenter', () => {
+            const imgUrl = item.getAttribute('data-image');
+            if(imgUrl && serviceImgTarget) serviceImgTarget.src = imgUrl;
+            serviceImgCursor?.classList.add('active');
+          });
+          item.addEventListener('mouseleave', () => {
+            serviceImgCursor?.classList.remove('active');
+          });
+        });
+
+        // --- VIDEO PLAY ON HOVER ---
+        const projectCards = document.querySelectorAll('.project-card');
+        projectCards.forEach(card => {
+          const video = card.querySelector('video');
+          if(video) {
+            card.addEventListener('mouseenter', () => video.play());
+            card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+          }
+        });
+
+        // --- MULTILINGUAL HELLO ---
+        const greetings = [{ text: "Hello!", lang: "English" }, { text: "你好！", lang: "中文" }, { text: "안녕하세요!", lang: "한국어" }, { text: "こんにちは！",lang: "日本語" }, { text: "Bonjour!", lang: "Français" }, { text: "Halo!", lang: "Indonesia" }];
+        const helloEl = document.getElementById('hello-text');
+        const badgeEl = document.getElementById('lang-badge');
+        let idx = 0; let heroVisible = true;
+        const heroObs = new IntersectionObserver((entries) => { heroVisible = entries[0].isIntersecting; }, { threshold: 0.2 });
+        heroObs.observe(document.getElementById('hero')!);
+
+        setInterval(() => {
+          if (!heroVisible) return;
+          helloEl?.classList.add('exit');
+          if(badgeEl) badgeEl.style.opacity = '0';
+          setTimeout(() => {
+            idx = (idx + 1) % greetings.length;
+            if(helloEl) helloEl.textContent = greetings[idx].text;
+            if(badgeEl) badgeEl.textContent = greetings[idx].lang;
+            helloEl?.classList.remove('exit');
+            helloEl?.classList.add('enter');
+            helloEl?.offsetHeight;
+            setTimeout(() => { helloEl?.classList.remove('enter'); if(badgeEl) badgeEl.style.opacity = '1'; }, 50);
+          }, 300);
+        }, 2000);
+
+        // --- SCROLL ANIMATIONS ---
+        gsap.to(".about-text", { scrollTrigger: { trigger: "#about", start: "top 70%" }, y: 0, opacity: 1, duration: 0.9, ease: "power3.out" });
+        gsap.to(".service-item", { scrollTrigger: { trigger: "#about", start: "top 60%" }, y: 0, opacity: 1, duration: 0.8, stagger: 0.2, ease: "power3.out" });
+
+        const brushPath = document.querySelector('.brush-path') as SVGPathElement;
+        if (brushPath) {
+          const pathLength = brushPath.getTotalLength();
+          brushPath.style.strokeDasharray = pathLength.toString();
+          brushPath.style.strokeDashoffset = pathLength.toString();
+          gsap.to(brushPath, { strokeDashoffset: 0, ease: "none", scrollTrigger: { trigger: "#about", start: "top 80%", end: "bottom center", scrub: 1.5 } });
+        }
+
+        // Horizontal scroll Showcase
+        const mediaQuery = window.matchMedia("(min-width: 768px)");
+        if (mediaQuery.matches) {
+          const sections = gsap.utils.toArray(".panel");
+          gsap.to(sections, {
+            xPercent: -100 * (sections.length - 1), ease: "none",
+            scrollTrigger: { trigger: ".showcase-wrapper", pin: true, scrub: 1, snap: 1 / (sections.length - 1), end: () => "+=" + (document.querySelector(".horizontal-scroll-container") as HTMLElement).offsetWidth }
+          });
+        }
+
+        gsap.to(".contact-block", {
+          scrollTrigger: { trigger: "#contact", start: "top 75%" },
+          y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out"
+        });
+
+        // --- VELOCITY SKEW X (HANYA UNTUK HORIZONTAL SCROLL) ---
+        let proxy = { skew: 0 },
+            // Ubah jadi skewX agar miring ke samping
+            skewSetter = gsap.quickSetter(".skew-x-elem", "skewX", "deg"), 
+            clamp = gsap.utils.clamp(-15, 15); // Derajat dimaksimalkan biar kerasa di kartu gambar
+
+        ScrollTrigger.create({
+          onUpdate: (self) => {
+            // Efek miring dihitung dari seberapa cepat kamu scroll
+            let skew = clamp(self.getVelocity() / -150);
+            if (Math.abs(skew) > Math.abs(proxy.skew)) {
+              proxy.skew = skew;
+              gsap.to(proxy, {skew: 0, duration: 0.8, ease: "power3", overwrite: true, onUpdate: () => skewSetter(proxy.skew)});
+            }
+          }
+        });
+
+        // --- BACK TO TOP BUTTON ---
+        const backToTopBtn = document.getElementById('back-to-top');
+        backToTopBtn?.addEventListener('click', () => {
+          gsap.to(window, { duration: 1.5, scrollTo: 0, ease: "power4.inOut" });
+        });
+        
+        // --- REALTIME CLOCK ---
+        const timeEl = document.getElementById('local-time');
+        if (timeEl) {
+          setInterval(() => {
+            const now = new Date();
+            // Aku tambahin second: '2-digit' biar detiknya kelihatan jalan terus!
+            timeEl.textContent = now.toLocaleTimeString('en-US', { 
+              timeZone: 'Asia/Jakarta', 
+              hour: '2-digit', 
+              minute: '2-digit', 
+              second: '2-digit',
+              hour12: true 
+            }) + " WIB";
+          }, 1000);
+        }
+
+      });
+    </script>
+  </body>
+</html>
