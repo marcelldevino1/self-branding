@@ -15,7 +15,7 @@ import '../styles/global.css';
 
     <style>
       :root {
-        --blue-vivid: #2563EB;
+        --blue-vivid: #eb2525;
         --blue-bg: #3B6FF5;
         --blue-dark: #1a3db5;
         --accent-green: #AAEE44;
@@ -32,6 +32,11 @@ import '../styles/global.css';
 
       body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--text-light); overflow-x: hidden; }
       ::selection { background: var(--accent-green); color: var(--text-dark); }
+
+      /* UTILITY CLASS PENGGANTI TAILWIND */
+      @media (max-width: 767px) {
+        .hide-on-mobile { display: none !important; }
+      }
 
       /* 1. FILM GRAIN OVERLAY */
       .noise-overlay {
@@ -60,7 +65,8 @@ import '../styles/global.css';
       .service-img-cursor img { width: 100%; height: 100%; object-fit: cover; }
 
       /* ── Nav & Mobile Menu ── */
-      nav { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 2.5rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; mix-blend-mode: difference; }
+      nav { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; mix-blend-mode: difference; }
+      @media (min-width: 768px) { nav { padding: 1.5rem 2.5rem; } }
       .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: white; text-decoration: none; display: inline-block; }
       .nav-links { display: none; gap: 2.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; }
       @media (min-width: 768px) { .nav-links { display: flex; } .menu-btn { display: none !important; } }
@@ -69,12 +75,14 @@ import '../styles/global.css';
       .nav-cta { background: var(--accent-green); color: var(--text-dark); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; border: none; padding: 0.6rem 1.2rem; border-radius: 999px; cursor: pointer; display: none; transition: background 0.2s; }
       @media (min-width: 768px) { .nav-cta { display: inline-block; } }
       .nav-cta:hover { background: white; }
-      .menu-btn { background: none; border: none; color: white; font-family: 'Syne Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; z-index: 101; }
-      .mobile-menu { position: fixed; top: 0; left: 0; width: 100%; height: 137vh; background: var(--blue-bg); z-index: 90; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transform: translateX(100%); }
+      .menu-btn { background: none; border: none; color: white; font-family: 'Syne Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; z-index: 101; padding: 0.5rem; }
+      
+      /* Diperbaiki: Tinggi menu menggunakan dvh agar menyesuaikan browser mobile */
+      .mobile-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background: var(--blue-bg); z-index: 90; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transform: translateX(100%); }
       .mobile-link { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: white; text-decoration: none; opacity: 0; transform: translateY(20px); letter-spacing: -0.02em; }
 
       /* ── HERO ── */
-      #hero { min-height: 100vh; background: var(--blue-bg); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 6rem 2rem 4rem; }
+      #hero { min-height: 100vh; min-height: 100dvh; background: var(--blue-bg); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 6rem 1.5rem 4rem; }
       .blob { position: absolute; border-radius: 50%; pointer-events: none; }
       .blob-1 { width: 120px; height: 120px; background: var(--accent-green); top: 15%; left: 8%; animation: floatA 5s ease-in-out infinite; }
       .blob-2 { width: 80px; height: 80px; background: var(--accent-pink); bottom: 20%; left: 12%; animation: floatB 6s ease-in-out infinite; }
@@ -83,27 +91,28 @@ import '../styles/global.css';
       @keyframes floatA { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-18px); } }
       @keyframes floatB { 0%, 100% { transform: translateY(0px) translateX(0px); } 50% { transform: translateY(-12px) translateX(10px); } }
       @keyframes floatC { 0%, 100% { transform: rotate(45deg) translateY(0px); } 50% { transform: rotate(45deg) translateY(-14px); } }
-      .hello-wrapper { position: relative; text-align: center; z-index: 2; }
-      #hello-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(4rem, 15vw, 12rem); color: white; line-height: 1; letter-spacing: -0.03em; display: block; opacity: 1; transform: translateY(0); transition: opacity 0.3s ease, transform 0.3s ease; }
+      .hello-wrapper { position: relative; text-align: center; z-index: 2; width: 100%; }
+      #hello-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3.5rem, 15vw, 12rem); color: white; line-height: 1; letter-spacing: -0.03em; display: block; opacity: 1; transform: translateY(0); transition: opacity 0.3s ease, transform 0.3s ease; word-break: keep-all; }
       #hello-text.exit { opacity: 0; transform: translateY(-30px) scale(0.95); }
       #hello-text.enter { opacity: 0; transform: translateY(30px) scale(0.95); }
       #lang-badge { display: inline-block; font-family: 'Syne Mono', monospace; font-size: 0.7rem; background: rgba(0,0,0,0.25); color: rgba(255,255,255,0.85); padding: 0.25rem 0.75rem; border-radius: 999px; margin-bottom: 0.75rem; transition: opacity 0.3s; }
-      .hero-sub { margin-top: 1.5rem; text-align: center; z-index: 2; opacity: 0; transform: translateY(16px); }
+      .hero-sub { margin-top: 1.5rem; text-align: center; z-index: 2; opacity: 0; transform: translateY(16px); padding: 0 1rem; }
       .hero-sub p { font-size: clamp(0.9rem, 2vw, 1.1rem); font-weight: 300; color: rgba(255,255,255,0.8); }
       .hero-sub strong { font-style: italic; font-weight: 400; color: white; }
 
       /* ── ABOUT ── */
-      #about { padding: 6rem 1.5rem; background: var(--off-white); color: var(--text-dark); position: relative; overflow: hidden; }
+      #about { padding: 5rem 1.5rem; background: var(--off-white); color: var(--text-dark); position: relative; overflow: hidden; }
       @media (min-width: 768px) { #about { padding: 8rem 2.5rem; } }
       .about-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3rem; position: relative; z-index: 2; }
       @media (min-width: 768px) { .about-inner { grid-template-columns: 5fr 7fr; gap: 4rem; } }
       .about-tag { font-family: 'Syne Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--blue-vivid); margin-bottom: 1.2rem; }
-      .about-heading { font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
+      .about-heading { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
       .about-heading em { font-style: italic; color: var(--blue-vivid); }
-      .about-body { font-size: 1.05rem; line-height: 1.75; color: #444; max-width: 380px; }
+      .about-body { font-size: 1rem; line-height: 1.6; color: #444; max-width: 100%; }
+      @media (min-width: 768px) { .about-body { font-size: 1.05rem; line-height: 1.75; max-width: 380px; } }
       .services-list { list-style: none; border-top: 1px solid #d0d0d8; }
       .service-item { padding: 1.5rem 0; border-bottom: 1px solid #d0d0d8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: padding-left 0.3s; opacity: 0; transform: translateY(20px); }
-      .service-item:hover { padding-left: 1.2rem; }
+      @media (min-width: 768px) { .service-item:hover { padding-left: 1.2rem; } }
       .service-name { font-family: 'Syne', sans-serif; font-size: clamp(1.2rem, 3vw, 2.2rem); font-weight: 700; color: var(--text-dark); pointer-events: none; }
       .service-num { font-family: 'Syne Mono', monospace; font-size: 0.85rem; color: #aaa; transition: color 0.3s; pointer-events: none; }
       .service-item:hover .service-num { color: var(--blue-vivid); }
@@ -111,18 +120,19 @@ import '../styles/global.css';
       .brush-path { stroke: var(--accent-pink); stroke-width: 8; stroke-linecap: round; fill: none; }
 
       /* ── WORK / SHOWCASE ── */
-      .showcase-wrapper { background: var(--surface); position: relative; overflow: hidden; }
-      .showcase-label { position: absolute; top: 3rem; left: 1.5rem; z-index: 10; }
-      @media (min-width: 768px) { .showcase-label { left: 2.5rem; } }
+      .showcase-wrapper { background: var(--surface); position: relative; overflow: hidden; padding-bottom: 3rem; }
+      @media (min-width: 768px) { .showcase-wrapper { padding-bottom: 0; } }
+      .showcase-label { position: relative; padding: 3rem 1.5rem 1rem; z-index: 10; }
+      @media (min-width: 768px) { .showcase-label { position: absolute; top: 3rem; left: 2.5rem; padding: 0; } }
       .showcase-label h2 { font-family: 'Syne Mono', monospace; font-size: 0.75rem; text-transform: uppercase; color: var(--accent-green); }
-      .horizontal-scroll-container { display: flex; flex-direction: column; width: 100%; height: auto; padding-top: 6rem; }
-      .panel { width: 100%; padding: 2rem 1.5rem; }
+      .horizontal-scroll-container { display: flex; flex-direction: column; width: 100%; height: auto; gap: 2rem; }
+      .panel { width: 100%; padding: 0 1.5rem; }
       @media (min-width: 768px) {
-        .horizontal-scroll-container { flex-direction: row; height: 100vh; align-items: center; width: 300vw; padding-top: 0; }
+        .horizontal-scroll-container { flex-direction: row; height: 100vh; align-items: center; width: 300vw; gap: 0; }
         .panel { width: 100vw; height: 100%; display: flex; align-items: center; justify-content: center; padding: 4rem 2.5rem 2rem; }
       }
-      .project-card { width: 100%; max-width: 900px; height: 50vh; position: relative; cursor: pointer; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.4s, box-shadow 0.4s; }
-      @media (min-width: 768px) { .project-card { height: 70vh; } }
+      .project-card { width: 100%; max-width: 900px; height: 45vh; min-height: 350px; position: relative; cursor: pointer; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.4s, box-shadow 0.4s; }
+      @media (min-width: 768px) { .project-card { height: 70vh; border-radius: 24px; } }
       .project-card:hover { transform: translateY(-8px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.25); }
       
       .project-media-container { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
@@ -132,13 +142,14 @@ import '../styles/global.css';
       .project-card:hover .project-media-container video { opacity: 1; transform: scale(1.04); }
 
       .project-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,18,0.95) 0%, rgba(10,10,18,0.2) 50%, transparent 100%); pointer-events: none; }
-      .project-info { position: absolute; bottom: 0; left: 0; padding: 1.5rem; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; }
-      @media (min-width: 768px) { .project-info { padding: 2.5rem; } }
-      .project-title { font-family: 'Syne', sans-serif; font-size: clamp(1.5rem, 4.5vw, 4rem); font-weight: 800; color: white; line-height: 1; transform: translateY(10px); transition: transform 0.4s ease; }
+      .project-info { position: absolute; bottom: 0; left: 0; padding: 1.2rem; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
+      @media (min-width: 768px) { .project-info { padding: 2.5rem; flex-wrap: nowrap; } }
+      .project-title { font-family: 'Syne', sans-serif; font-size: clamp(1.5rem, 4.5vw, 4rem); font-weight: 800; color: white; line-height: 1.1; transform: translateY(0); transition: transform 0.4s ease; }
+      @media (min-width: 768px) { .project-title { transform: translateY(10px); } }
       .project-card:hover .project-title { transform: translateY(0); }
       .project-category { font-family: 'DM Sans', sans-serif; font-size: clamp(0.85rem, 2vw, 1.05rem); color: rgba(255,255,255,0.7); margin-top: 0.6rem; }
-      .project-tag { font-family: 'Syne Mono', monospace; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: var(--text-dark); padding: 0.5rem 1rem; border-radius: 999px; opacity: 0; transform: translateY(15px); transition: all 0.4s; display: none; }
-      @media (min-width: 768px) { .project-tag { display: block; } }
+      .project-tag { font-family: 'Syne Mono', monospace; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: var(--text-dark); padding: 0.5rem 1rem; border-radius: 999px; display: inline-block; }
+      @media (min-width: 768px) { .project-tag { opacity: 0; transform: translateY(15px); transition: all 0.4s; } }
       .project-card:hover .project-tag { opacity: 1; transform: translateY(0); }
       .tag-pink { background: var(--accent-pink); }
       .tag-yellow { background: var(--accent-yellow); }
@@ -146,38 +157,36 @@ import '../styles/global.css';
 
       /* 3. INFINITE MARQUEE */
       .marquee-section { background: var(--accent-green); color: var(--text-dark); padding: 1.5rem 0; overflow: hidden; display: flex; align-items: center; border-top: 1px solid var(--text-dark); border-bottom: 1px solid var(--text-dark); }
-      .marquee-track { display: flex; white-space: nowrap; font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; animation: scrollMarquee 20s linear infinite; }
-      .marquee-track span { padding: 0 2rem; }
+      .marquee-track { display: flex; white-space: nowrap; font-family: 'Syne', sans-serif; font-size: clamp(1.5rem, 4vw, 3.5rem); font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; animation: scrollMarquee 20s linear infinite; }
+      .marquee-track span { padding: 0 1.5rem; }
+      @media (min-width: 768px) { .marquee-track span { padding: 0 2rem; } }
       @keyframes scrollMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
       /* ── CONTACT ── */
-      #contact { background: var(--blue-bg); color: white; padding: 6rem 1.5rem; }
+      #contact { background: var(--blue-bg); color: white; padding: 5rem 1.5rem; }
       @media (min-width: 768px) { #contact { padding: 10rem 2.5rem; } }
-      .contact-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 4rem; }
+      .contact-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3rem; }
       @media (min-width: 768px) { .contact-inner { grid-template-columns: 1fr 1fr; gap: 6rem; } }
-      .contact-eyebrow { font-family: 'Syne Mono', monospace; font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; display: block; }
-      .contact-heading { font-family: 'Syne', sans-serif; font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 800; line-height: 1; letter-spacing: -0.03em; margin-bottom: 2rem; }
-      .contact-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
-      @media (min-width: 600px) { .contact-grid { grid-template-columns: 1fr 1fr; } }
+      .contact-eyebrow { font-family: 'Syne Mono', monospace; font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 1rem; display: block; }
+      .contact-heading { font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 6vw, 5.5rem); font-weight: 800; line-height: 1; letter-spacing: -0.03em; margin-bottom: 2rem; }
+      .contact-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+      @media (min-width: 600px) { .contact-grid { grid-template-columns: 1fr 1fr; gap: 3rem; } }
       .contact-block { opacity: 0; transform: translateY(20px); }
       .contact-block h4 { font-family: 'Syne Mono', monospace; font-size: 0.75rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); }
-      .contact-link { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; color: white; text-decoration: none; transition: color 0.3s; display: inline-block; }
+      .contact-link { font-family: 'Syne', sans-serif; font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 700; color: white; text-decoration: none; transition: color 0.3s; display: inline-block; word-break: break-all; }
       .contact-link:hover { color: var(--accent-yellow); }
       .social-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
       .social-list a { font-family: 'DM Sans', sans-serif; font-size: 1.1rem; color: white; text-decoration: none; transition: color 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; }
       .social-list a:hover { color: var(--accent-pink); }
       .social-list a::before { content: '→'; opacity: 0; transform: translateX(-10px); transition: all 0.3s; }
-      .social-list a:hover::before { opacity: 1; transform: translateX(0); }
+      @media (min-width: 768px) { .social-list a:hover::before { opacity: 1; transform: translateX(0); } }
       .address-text { font-family: 'DM Sans', sans-serif; font-size: 1.1rem; line-height: 1.6; color: rgba(255,255,255,0.9); }
 
       /* FOOTER */
       footer { background: var(--surface); color: white; padding: 2rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
       @media (min-width: 768px) { footer { padding: 2rem 2.5rem; } }
-      .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; justify-content: space-between; align-items: center; font-family: 'Syne Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); }
-      @media (min-width: 768px) { .footer-inner { flex-direction: row; } }
-      .footer-links { display: flex; gap: 2rem; }
-      .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.3s; }
-      .footer-links a:hover { color: white; }
+      .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column-reverse; gap: 1.5rem; justify-content: space-between; align-items: center; font-family: 'Syne Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); text-align: center; }
+      @media (min-width: 768px) { .footer-inner { flex-direction: row; text-align: left; } }
       .back-to-top { background: none; border: none; color: white; font-family: 'Syne Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: color 0.3s; }
       .back-to-top:hover { color: var(--accent-green); }
       .back-to-top svg { width: 14px; height: 14px; transition: transform 0.3s; }
@@ -193,9 +202,9 @@ import '../styles/global.css';
       <div class="preloader-text"><span id="pre-text">MARCELL©</span></div>
     </div>
 
-    <div class="cursor" id="cursor"></div>
+    <div class="cursor hide-on-mobile" id="cursor"></div>
 
-    <div class="service-img-cursor hidden md:block" id="service-img-cursor">
+    <div class="service-img-cursor hide-on-mobile" id="service-img-cursor">
       <img src="" alt="Service preview" id="service-img-target" />
     </div>
 
@@ -228,7 +237,7 @@ import '../styles/global.css';
     </section>
 
     <section id="about">
-      <svg class="decorative-brush hidden md:block" viewBox="0 0 200 800" xmlns="http://www.w3.org/2000/svg">
+      <svg class="decorative-brush hide-on-mobile" viewBox="0 0 200 800" xmlns="http://www.w3.org/2000/svg">
         <path class="brush-path" d="M 50,0 C 150,200 -50,400 150,600 C 250,700 50,800 50,800" />
       </svg>
       <div class="about-inner">
@@ -279,7 +288,7 @@ import '../styles/global.css';
             </div>
             <div class="project-overlay"></div>
             <div class="project-info">
-              <div><h3 class="project-title">Aplikasi Absensi</h3><p class="project-category">Industrial Design</p></div>
+              <div><h3 class="project-title">UI/UX Aplikasi Absensi</h3><p class="project-category">Industrial Design</p></div>
               <div class="project-tag tag-yellow">View Case</div>
             </div>
           </div>
@@ -305,7 +314,7 @@ import '../styles/global.css';
         <div class="contact-grid">
           <div class="contact-block">
             <h4>General Enquiries</h4>
-            <a href="marcelldevino7@gmail.com" class="contact-link hover-target magnetic">marcelldevino7@gmail.com</a>
+            <a href="mailto:marcelldevino7@gmail.com" class="contact-link hover-target magnetic">marcelldevino7@gmail.com</a>
           </div>
           <div class="contact-block">
             <h4>Follow Us</h4>
@@ -327,7 +336,7 @@ import '../styles/global.css';
 
     <footer>
       <div class="footer-inner">
-        <div>&copy; 2026 Studio&trade;. All rights reserved.</div>
+        <div>&copy; 2026 Marcell&trade;. All rights reserved.</div>
         <button id="back-to-top" class="back-to-top hover-target magnetic">
           Back to top
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -396,26 +405,29 @@ import '../styles/global.css';
         const serviceImgTarget = document.getElementById('service-img-target') as HTMLImageElement;
         const serviceItems = document.querySelectorAll('.service-item');
 
-        document.addEventListener('mousemove', (e) => { 
-          gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.08, ease: "power2.out" }); 
-          gsap.to(serviceImgCursor, { x: e.clientX, y: e.clientY, duration: 0.4, ease: "power3.out" });
-        });
-
-        hoverTargets.forEach(el => {
-          el.addEventListener('mouseenter', () => cursor?.classList.add('enlarged'));
-          el.addEventListener('mouseleave', () => cursor?.classList.remove('enlarged'));
-        });
-
-        serviceItems.forEach(item => {
-          item.addEventListener('mouseenter', () => {
-            const imgUrl = item.getAttribute('data-image');
-            if(imgUrl && serviceImgTarget) serviceImgTarget.src = imgUrl;
-            serviceImgCursor?.classList.add('active');
+        // Only track mouse movement on desktop
+        if (window.matchMedia("(min-width: 768px)").matches) {
+          document.addEventListener('mousemove', (e) => { 
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.08, ease: "power2.out" }); 
+            gsap.to(serviceImgCursor, { x: e.clientX, y: e.clientY, duration: 0.4, ease: "power3.out" });
           });
-          item.addEventListener('mouseleave', () => {
-            serviceImgCursor?.classList.remove('active');
+
+          hoverTargets.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('enlarged'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('enlarged'));
           });
-        });
+
+          serviceItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+              const imgUrl = item.getAttribute('data-image');
+              if(imgUrl && serviceImgTarget) serviceImgTarget.src = imgUrl;
+              serviceImgCursor?.classList.add('active');
+            });
+            item.addEventListener('mouseleave', () => {
+              serviceImgCursor?.classList.remove('active');
+            });
+          });
+        }
 
         // --- VIDEO PLAY ON HOVER ---
         const projectCards = document.querySelectorAll('.project-card');
@@ -478,21 +490,21 @@ import '../styles/global.css';
         });
 
         // --- VELOCITY SKEW X (HANYA UNTUK HORIZONTAL SCROLL) ---
-        let proxy = { skew: 0 },
-            // Ubah jadi skewX agar miring ke samping
-            skewSetter = gsap.quickSetter(".skew-x-elem", "skewX", "deg"), 
-            clamp = gsap.utils.clamp(-15, 15); // Derajat dimaksimalkan biar kerasa di kartu gambar
+        if (mediaQuery.matches) {
+          let proxy = { skew: 0 },
+              skewSetter = gsap.quickSetter(".skew-x-elem", "skewX", "deg"), 
+              clamp = gsap.utils.clamp(-15, 15);
 
-        ScrollTrigger.create({
-          onUpdate: (self) => {
-            // Efek miring dihitung dari seberapa cepat kamu scroll
-            let skew = clamp(self.getVelocity() / -150);
-            if (Math.abs(skew) > Math.abs(proxy.skew)) {
-              proxy.skew = skew;
-              gsap.to(proxy, {skew: 0, duration: 0.8, ease: "power3", overwrite: true, onUpdate: () => skewSetter(proxy.skew)});
+          ScrollTrigger.create({
+            onUpdate: (self) => {
+              let skew = clamp(self.getVelocity() / -150);
+              if (Math.abs(skew) > Math.abs(proxy.skew)) {
+                proxy.skew = skew;
+                gsap.to(proxy, {skew: 0, duration: 0.8, ease: "power3", overwrite: true, onUpdate: () => skewSetter(proxy.skew)});
+              }
             }
-          }
-        });
+          });
+        }
 
         // --- BACK TO TOP BUTTON ---
         const backToTopBtn = document.getElementById('back-to-top');
@@ -505,7 +517,6 @@ import '../styles/global.css';
         if (timeEl) {
           setInterval(() => {
             const now = new Date();
-            // Aku tambahin second: '2-digit' biar detiknya kelihatan jalan terus!
             timeEl.textContent = now.toLocaleTimeString('en-US', { 
               timeZone: 'Asia/Jakarta', 
               hour: '2-digit', 
